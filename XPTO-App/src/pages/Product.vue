@@ -3,7 +3,7 @@
     <q-table
       :data="data"
       :columns="columns"
-      row-key="title"
+      row-key="id"
       :filter="filter"
       :separator="separator"
       no-data-label="Desculpe, não encontramos nenhum produto!"
@@ -61,7 +61,7 @@
         </q-tr>
       </template>
     <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Procurar">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -69,45 +69,26 @@
       </template>
     </q-table>
 
-    <q-dialog v-model="card">
-      <q-card class="my-card">
-        <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg" />
-
+    <q-dialog
+      v-model="card"
+      full-height
+      full-width
+    >
+      <q-card class="column full-height" style="width: 300px">
         <q-card-section>
-          <q-btn
-            fab
-            color="primary"
-            icon="place"
-            class="absolute"
-            style="top: 0; right: 12px; transform: translateY(-50%);"
-          />
-
-          <div class="row no-wrap items-center">
-            <div class="col text-h6 ellipsis">
-              Cafe Basilico
-            </div>
-            <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
-              <q-icon name="place" />
-              250 ft
-            </div>
-          </div>
-
+          <div class="text-h6">Titulo</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          <div class="text-subtitle1">
-            $・Italian, Cafe
-          </div>
-          <div class="text-caption text-grey">
-            Small plates, salads & sandwiches in an intimate setting.
-          </div>
+        <q-card-section class="col q-pt-none">
+          TODO - Form Editar
         </q-card-section>
+        
+        <q-card-actions align="right" class="text-grey-10">
+          <q-btn class="bg-green" icon-right="eva-save" flat label="Salvar" v-close-popup />
+        </q-card-actions>
 
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn v-close-popup flat color="primary" label="Reserve" />
-          <q-btn v-close-popup flat color="primary" round icon="event" />
+        <q-card-actions align="right" class="text-black-10">
+          <q-btn class="bg-red btn btn-lg" icon-right="eva-slash" flat label="Cancelar" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -123,6 +104,7 @@ export default {
         filter: '',
         separator: 'cell',
         card: false,
+        modelo: {},
         columns: [
         {
         name: 'title',
@@ -140,24 +122,6 @@ export default {
         { name: 'barcode', label: 'Código de Barras', field: 'barCode', sortable: true },
         ],
         data: [
-            {
-                id: 1,
-                title: 'Notebook ASUS Aspire-5',
-                price: 5000,
-                barCode: 3123123123123
-            },
-            {
-                id: 2, 
-                title: 'Cadeira MX-5',
-                price: 800,
-                barCode: 654654654654654
-            },
-            {
-                id: 3, 
-                title: 'Memória RAM 8GB 3000mhz',
-                price: 350.32,
-                barCode: 654654654654654654654654654654
-            }
         ]
     }
     },
@@ -165,7 +129,21 @@ export default {
         openModal(data){
             console.log(data)
             this.card = true
+            this.modelo = data
+        },
+        getAllProducts(){
+          this.$axios
+            .get('http://localhost:5000/api/Product')
+            .then(response => {
+              console.log(response.data)
+              this.data = response.data
+            }).catch(err => {
+              console.log('err: ', err)
+            })
         }
+    },
+    beforeMount() {
+      this.getAllProducts()
     }
 }
 </script>
