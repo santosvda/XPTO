@@ -80,16 +80,45 @@
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
-          TODO - Form Editar
-        </q-card-section>
-        
-        <q-card-actions align="right" class="text-grey-10">
-          <q-btn class="bg-green" icon-right="eva-save" flat label="Salvar" v-close-popup />
-        </q-card-actions>
+           <q-form
+              @submit="onSubmit"
+              @reset="onReset"
+              class="q-gutter-md"
+            >
+              <q-input
+                filled
+                v-model="modelo.title"
+                label="Produto *"
+                hint="Nome do Produto"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || 'Informe o nome do produto']"
+              />
 
-        <q-card-actions align="right" class="text-black-10">
-          <q-btn class="bg-red btn btn-lg" icon-right="eva-slash" flat label="Cancelar" v-close-popup />
-        </q-card-actions>
+              <q-input
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                filled
+                type="text"
+                v-model="modelo.price"
+                label="Preço *"
+                mask="#.##"
+                fill-mask="0"
+                reverse-fill-mask
+                lazy-rules
+                :rules="[
+                  val => val !== null && val !== '' || 'Informe um preço',
+                  val => val > 0 && val < 99999999.99 || 'Preço máximo 99999999.99'
+                ]"
+              />
+
+              <div class="text-grey-10">
+                <q-btn label="Enviar" type="submit" color="green-6"/>
+                <q-btn label="Apagar" type="reset" color="grey-7" class="q-ml-sm q-mr-sm" />
+                <q-card-action class="text-grey-10">
+                  <q-btn icon-right="eva-slash" label="Cancelar" color="red-6"  v-close-popup />
+                </q-card-action>
+              </div>
+            </q-form>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </div>
@@ -118,8 +147,8 @@ export default {
         style: 'max-width: 100px',
         headerClasses: 'bg-primary text-white'
         },
-        { name: 'price', align: 'center', label: 'Preço', field: 'price', sortable: true},
-        { name: 'barcode', label: 'Código de Barras', field: 'barCode', sortable: true },
+        { name: 'price', align: 'left', label: 'Preço (R$)', field: 'price', sortable: true},
+        { name: 'barcode', align: 'left', label: 'Código de Barras', field: 'barCode', sortable: true },
         ],
         data: [
         ]
@@ -129,7 +158,7 @@ export default {
         openModal(data){
             console.log(data)
             this.card = true
-            this.modelo = data
+            this.modelo = Object.assign({}, data)
         },
         getAllProducts(){
           this.$axios
@@ -137,6 +166,10 @@ export default {
             .then(response => {
               console.log(response.data)
               this.data = response.data
+              //formata o preço com as casas decimais
+              this.data.forEach(element => {
+                element.price = element.price.toFixed(2)
+              });
             }).catch(err => {
               console.log('err: ', err)
             })
