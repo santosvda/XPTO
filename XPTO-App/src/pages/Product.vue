@@ -105,7 +105,7 @@
                 filled
                 type="text"
                 v-model="product.price"
-                label="Preço *"
+                label="Preço(R$) *"
                 hint="Preço unitário do produto"
                 mask="#.##"
                 fill-mask="0"
@@ -151,7 +151,7 @@ export default {
         separator: 'cell',
         modalTitle: '',
         card: false,
-        edit: false,
+        create: false,
         product: {},
         columns: [
         {
@@ -180,11 +180,13 @@ export default {
               this.card = true
               this.product = {title: '', price: 0.00, barCode: '', image: ''}
               this.modalTitle = 'Cadastrar um novo produto'
+              this.create = true;
             }else{
             console.log(data)
               this.card = true
               this.product = Object.assign({}, data)
               this.modalTitle = `Editando: ${data.title}`
+              this.create = false;
             }
         },
         getAllProducts(){
@@ -201,49 +203,95 @@ export default {
               console.log('err: ', err)
             })
         },
+        createProduct() {
+           this.$q.loading.show()
+
+            this.$axios.post('http://localhost:5000/api/Product', this.product).then(response => {
+              console.log('response: ', response)
+              this.$q.notify({
+                color: 'green-4',
+                textColor: 'white',
+                icon: 'eva-cloud-upload',
+                message: 'Produto Salvo!',
+                actions: [
+                  { label: 'Fechar', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+              if (this.$q.platform.is.safari) {
+                setTimeout(() => {
+                  window.location.href = '/'
+                }, 1000)
+              }
+            }).catch(err => {
+              console.log('err: ', err)
+              this.$q.notify({
+                message: 'Erro!',
+                actions: [
+                  { label: 'Dismiss', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+              if (this.$q.platform.is.safari) {
+                setTimeout(() => {
+                  window.location.href = '/'
+                }, 1000)
+              }
+            })
+
+            this.card = false;
+            this.getAllProducts()
+        },
         onSubmit () {
-        this.$q.loading.show()
+          if(this.create){
+            this.createProduct()
+          }else{
+            this.$q.loading.show()
 
-        let formData = new FormData()
-        formData.append('title', this.product.title)
-        formData.append('price', this.product.price)
-        formData.append('barCode', this.product.barCode)
-        formData.append('image', this.product.image)
+            this.$axios.put(`http://localhost:5000/api/Product/${this.product.id}`, this.product).then(response => {
+              console.log('response: ', response)
+              this.$q.notify({
+                color: 'green-4',
+                textColor: 'white',
+                icon: 'eva-cloud-upload',
+                message: 'Produto Salvo!',
+                actions: [
+                  { label: 'Fechar', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+              if (this.$q.platform.is.safari) {
+                setTimeout(() => {
+                  window.location.href = '/'
+                }, 1000)
+              }
+            }).catch(err => {
+              console.log('err: ', err)
+              this.$q.notify({
+                color: 'red-7',
+                textColor: 'white',
+                icon: 'eva-cloud-upload',
+                message: 'Ops! Algo deu errado!',
+                message: 'Erro!',
+                actions: [
+                  { label: 'Fechar', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+              if (this.$q.platform.is.safari) {
+                setTimeout(() => {
+                  window.location.href = '/'
+                }, 1000)
+              }
+            })
 
-        this.$axios.post('http://localhost:5000/api/Product', this.product).then(response => {
-          console.log('response: ', response)
-          this.$q.notify({
-            message: 'Post created!',
-            actions: [
-              { label: 'Dismiss', color: 'white' }
-            ]
-          })
-          this.$q.loading.hide()
-          if (this.$q.platform.is.safari) {
-            setTimeout(() => {
-              window.location.href = '/'
-            }, 1000)
+            this.card = false;
+            this.getAllProducts()
           }
-        }).catch(err => {
-          console.log('err: ', err)
-          this.$q.notify({
-            message: 'Erro!',
-            actions: [
-              { label: 'Dismiss', color: 'white' }
-            ]
-          })
-          this.$q.loading.hide()
-          if (this.$q.platform.is.safari) {
-            setTimeout(() => {
-              window.location.href = '/'
-            }, 1000)
-          }
-        })
-      },
-
-      onReset () {
-        this.product = {title: '', price: 0.00, barCode: '', image: ''}
-      }
+        },
+        onReset () {
+          this.product = {title: '', price: 0.00, barCode: '', image: ''}
+        }
         
     },
     beforeMount() {
