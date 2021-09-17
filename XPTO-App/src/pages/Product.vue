@@ -92,33 +92,36 @@
             >
               <q-input
                 filled
-                v-model="modelo.title"
+                v-model="product.title"
                 label="Produto *"
                 hint="Nome do Produto"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Informe o nome do produto']"
+                :rules="[val => val.length >= 5 && val.length <= 200 || 'Quantidade de carateres do produto precisa estar entre 5 e 200'
+                ]"
               />
 
               <q-input
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                 filled
                 type="text"
-                v-model="modelo.price"
+                v-model="product.price"
                 label="Preço *"
+                hint="Preço unitário do produto"
                 mask="#.##"
                 fill-mask="0"
                 reverse-fill-mask
                 lazy-rules
                 :rules="[
                   val => val !== null && val !== '' || 'Informe um preço',
-                  val => val > 0 && val < 99999999.99 || 'Preço máximo 99999999.99'
+                  val => val < 99999999.99 || 'Preço máximo R$ 99999999.99'
                 ]"
               />
               <q-input
                 filled
                 type="text"
-                v-model="modelo.barCode"
+                v-model="product.barCode"
                 label="Código de Barras"
+                hint="Código de barras do produto"
                 lazy-rules
                 :rules="[
                   val => val.length <= 200 || 'Código de barras excedeu o limite de 200 caracteres'
@@ -149,7 +152,7 @@ export default {
         modalTitle: '',
         card: false,
         edit: false,
-        modelo: {},
+        product: {},
         columns: [
         {
         name: 'title',
@@ -175,12 +178,12 @@ export default {
             console.log(data)
             if(data == null){
               this.card = true
-              this.modelo = {title: '', price: 0.00, barCode: ''}
+              this.product = {title: '', price: 0.00, barCode: '', image: ''}
               this.modalTitle = 'Cadastrar um novo produto'
             }else{
             console.log(data)
               this.card = true
-              this.modelo = Object.assign({}, data)
+              this.product = Object.assign({}, data)
               this.modalTitle = `Editando: ${data.title}`
             }
         },
@@ -199,19 +202,47 @@ export default {
             })
         },
         onSubmit () {
-        this.$q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            icon: 'eva-cloud-upload-outline',
-            message: 'Salvo',
-            position: 'top',
-            progess: true,
-            timeout: 5000
+        this.$q.loading.show()
+
+        let formData = new FormData()
+        formData.append('title', this.product.title)
+        formData.append('price', this.product.price)
+        formData.append('barCode', this.product.barCode)
+        formData.append('image', this.product.image)
+
+        this.$axios.post('http://localhost:5000/api/Product', this.product).then(response => {
+          console.log('response: ', response)
+          this.$q.notify({
+            message: 'Post created!',
+            actions: [
+              { label: 'Dismiss', color: 'white' }
+            ]
           })
+          this.$q.loading.hide()
+          if (this.$q.platform.is.safari) {
+            setTimeout(() => {
+              window.location.href = '/'
+            }, 1000)
+          }
+        }).catch(err => {
+          console.log('err: ', err)
+          this.$q.notify({
+            message: 'Erro!',
+            actions: [
+              { label: 'Dismiss', color: 'white' }
+            ]
+          })
+          this.$q.loading.hide()
+          if (this.$q.platform.is.safari) {
+            setTimeout(() => {
+              window.location.href = '/'
+            }, 1000)
+          }
+        })
       },
 
       onReset () {
-        this.modelo = {title: '', price: 0.00, barCode: ''}
+        this.product = {title: '', price: 0.00, barCode: '', image: ''}
       }
         
     },
