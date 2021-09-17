@@ -223,6 +223,7 @@ export default {
                   window.location.href = '/'
                 }, 1000)
               }
+              this.getAllProducts()
             }).catch(err => {
               console.log('err: ', err)
               this.$q.notify({
@@ -240,7 +241,6 @@ export default {
             })
 
             this.card = false;
-            this.getAllProducts()
         },
         onSubmit () {
           if(this.create){
@@ -260,11 +260,7 @@ export default {
                 ]
               })
               this.$q.loading.hide()
-              if (this.$q.platform.is.safari) {
-                setTimeout(() => {
-                  window.location.href = '/'
-                }, 1000)
-              }
+              this.getAllProducts()
             }).catch(err => {
               console.log('err: ', err)
               this.$q.notify({
@@ -278,15 +274,9 @@ export default {
                 ]
               })
               this.$q.loading.hide()
-              if (this.$q.platform.is.safari) {
-                setTimeout(() => {
-                  window.location.href = '/'
-                }, 1000)
-              }
             })
 
             this.card = false;
-            this.getAllProducts()
           }
         },
         onReset () {
