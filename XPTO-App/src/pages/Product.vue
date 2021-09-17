@@ -1,5 +1,9 @@
 <template>
 <div class="q-pa-md">
+  <div class="q-mb-sm">
+    <q-btn label="Novo produto" @click="openModal(null)" color="green-6"/>
+  </div>
+
     <q-table
       :data="data"
       :columns="columns"
@@ -69,14 +73,15 @@
       </template>
     </q-table>
 
-    <q-dialog
+    <div>
+       <q-dialog
       v-model="card"
       full-height
       full-width
     >
       <q-card class="column full-height" style="width: 300px">
         <q-card-section>
-          <div class="text-h6">Titulo</div>
+          <div class="text-h6">{{modalTitle}}</div>
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
@@ -109,18 +114,27 @@
                   val => val > 0 && val < 99999999.99 || 'Preço máximo 99999999.99'
                 ]"
               />
+              <q-input
+                filled
+                type="text"
+                v-model="modelo.barCode"
+                label="Código de Barras"
+                lazy-rules
+                :rules="[
+                  val => val.length <= 200 || 'Código de barras excedeu o limite de 200 caracteres'
+                ]"
+              />
 
               <div class="text-grey-10">
                 <q-btn label="Enviar" type="submit" color="green-6"/>
                 <q-btn label="Apagar" type="reset" color="grey-7" class="q-ml-sm q-mr-sm" />
-                <q-card-action class="text-grey-10">
-                  <q-btn icon-right="eva-slash" label="Cancelar" color="red-6"  v-close-popup />
-                </q-card-action>
+                <q-btn icon-right="eva-slash" label="Cancelar" color="red-6"  v-close-popup />
               </div>
             </q-form>
         </q-card-section>
       </q-card>
     </q-dialog>
+    </div>
   </div>
 </template>
 
@@ -132,7 +146,9 @@ export default {
     return {
         filter: '',
         separator: 'cell',
+        modalTitle: '',
         card: false,
+        edit: false,
         modelo: {},
         columns: [
         {
@@ -157,8 +173,16 @@ export default {
     methods:{
         openModal(data){
             console.log(data)
-            this.card = true
-            this.modelo = Object.assign({}, data)
+            if(data == null){
+              this.card = true
+              this.modelo = {title: '', price: 0.00, barCode: ''}
+              this.modalTitle = 'Cadastrar um novo produto'
+            }else{
+            console.log(data)
+              this.card = true
+              this.modelo = Object.assign({}, data)
+              this.modalTitle = `Editando: ${data.title}`
+            }
         },
         getAllProducts(){
           this.$axios
@@ -173,7 +197,23 @@ export default {
             }).catch(err => {
               console.log('err: ', err)
             })
-        }
+        },
+        onSubmit () {
+        this.$q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'eva-cloud-upload-outline',
+            message: 'Salvo',
+            position: 'top',
+            progess: true,
+            timeout: 5000
+          })
+      },
+
+      onReset () {
+        this.modelo = {title: '', price: 0.00, barCode: ''}
+      }
+        
     },
     beforeMount() {
       this.getAllProducts()
