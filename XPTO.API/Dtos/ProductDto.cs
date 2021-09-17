@@ -13,6 +13,11 @@ namespace XPTO.API.Dtos
         [RegularExpression(@"^\d+.?\d{0,2}$", ErrorMessage = "Invalid Target Price; Maximum Two Decimal Points.")]
          [Range(0, 99999999.99, ErrorMessage = "Invalid Target Price; Max 10 digits")]
         public decimal Price { get; set; }
-        public string Image { get; set; }
+        public string Image64 { get; set; }
+        public byte[] Image { get; private set; }
+
+        public void setImage(byte[] image){
+            this.Image = image;
+        }
     }
 }

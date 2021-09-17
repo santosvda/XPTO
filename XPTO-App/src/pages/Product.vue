@@ -146,6 +146,7 @@
                   ref="canvas"
                   class="full-width"
                   height="240"
+                  id="cvs"
                 />
               </div>
                   <template v-slot:prepend>
@@ -200,7 +201,7 @@ export default {
             console.log(data)
             if(data == null){
               this.card = true
-              this.product = {title: '', price: 0.00, barCode: '', image: ''}
+              this.product = {title: '', price: 0.00, barCode: '', image64: ''}
               this.modalTitle = 'Cadastrar um novo produto'
               this.create = true;
             }else{
@@ -208,7 +209,9 @@ export default {
               this.card = true
               this.product = Object.assign({}, data)
               this.modalTitle = `Editando: ${data.title}`
-              this.create = false;
+              this.create = false
+              setTimeout(null,5000)
+              this.showImage(this.product.image64)
             }
         },
         getAllProducts(){
@@ -226,6 +229,7 @@ export default {
             })
         },
         createProduct() {
+            console.log(this.product)
            this.$q.loading.show()
 
             this.$axios.post('http://localhost:5000/api/Product', this.product).then(response => {
@@ -264,10 +268,9 @@ export default {
 
             this.card = false;
         },
-        onSubmit () {
-          if(this.create){
-            this.createProduct()
-          }else{
+        updateProduct(){
+          
+            console.log(this.product)
             this.$q.loading.show()
 
             this.$axios.put(`http://localhost:5000/api/Product/${this.product.id}`, this.product).then(response => {
@@ -299,14 +302,18 @@ export default {
             })
 
             this.card = false;
+        },
+        onSubmit () {
+          if(this.create){
+            this.createProduct()
+          }else{
+            this.updateProduct()
           }
         },
         onReset () {
-          this.product = {title: '', price: 0.00, barCode: '', image: ''}
+          this.product = {title: '', price: 0.00, barCode: '', image64: ''}
         },
         captureImage(file) {
-          this.product.image = Object.assign({}, file)
-
           let canvas = this.$refs.canvas
           let context = canvas.getContext('2d')
 
@@ -320,8 +327,19 @@ export default {
               this.imageCaptured = true
             }
             img.src = event.target.result
+            this.product.image64 = event.target.result
           }
           reader.readAsDataURL(file)
+        },
+        showImage(src) {
+          var canvas = document.getElementById("cvs");
+          var ctx = canvas.getContext("2d");
+
+          var image = new Image();
+            image.onload = function() {
+            ctx.drawImage(image, 0, 0);
+          };
+          image.src = src
         }
         
     },

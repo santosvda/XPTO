@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,10 @@ namespace XPTO.API.Controllers
             {
                 var products = await _productRepository.GetAllProductAsync();
                 var results = _mapper.Map<ProductDto[]>(products);
+
+                foreach(ProductDto p in results){
+                    p.Image64 = Convert.ToBase64String(p.Image);
+                }
 
                 return Ok(results);
             }
@@ -89,6 +94,13 @@ namespace XPTO.API.Controllers
         {
             try
             {
+                Regex regex=new Regex(@"^[\w/\:.-]+;base64,");
+                string base64Str = regex.Replace(model.Image64,string.Empty);
+                byte[] fileBytes = Convert.FromBase64String(base64Str);
+
+                
+                model.setImage(fileBytes);
+
                 var product = _mapper.Map<Product>(model);
 
                 product.DateInsert = DateTime.Now;
