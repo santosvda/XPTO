@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XPTO.Repository;
 
 namespace XPTO.API.Migrations
 {
     [DbContext(typeof(XPTOContext))]
-    partial class XPTOContextModelSnapshot : ModelSnapshot
+    [Migration("20210917020838_Migration01")]
+    partial class Migration01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +37,6 @@ namespace XPTO.API.Migrations
                     b.Property<DateTime?>("DateDeactivated");
 
                     b.Property<DateTime>("DateInsert");
-
-                    b.Property<byte[]>("Image");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)");

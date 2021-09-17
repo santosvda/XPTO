@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using XPTO.Repository;
 
 namespace XPTO.API.Migrations
 {
     [DbContext(typeof(XPTOContext))]
-    partial class XPTOContextModelSnapshot : ModelSnapshot
+    [Migration("20210917020923_Migration02")]
+    partial class Migration02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
