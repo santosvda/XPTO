@@ -132,6 +132,26 @@
                 <q-btn label="Enviar" type="submit" color="green-6"/>
                 <q-btn label="Apagar" type="reset" color="grey-7" class="q-ml-sm q-mr-sm" />
                 <q-btn icon-right="eva-slash" label="Cancelar" color="red-6"  v-close-popup />
+                <q-file
+                  class="q-mt-lg"
+                  v-model="imageUpload"
+                  @input="captureImage"
+                  label="Escolha uma imagem"
+                  accept="image/*"
+                  outlined
+                >
+                <div class="camera-frame q-pa-md">
+                <canvas
+                  v-show="imageCaptured"
+                  ref="canvas"
+                  class="full-width"
+                  height="240"
+                />
+              </div>
+                  <template v-slot:prepend>
+                    <q-icon name="eva-attach-outline" />
+                  </template>
+                </q-file>
               </div>
             </q-form>
         </q-card-section>
@@ -153,6 +173,8 @@ export default {
         card: false,
         create: false,
         product: {},
+        imageUpload: [],
+        imageCaptured: false,
         columns: [
         {
         name: 'title',
@@ -281,6 +303,25 @@ export default {
         },
         onReset () {
           this.product = {title: '', price: 0.00, barCode: '', image: ''}
+        },
+        captureImage(file) {
+          this.product.image = Object.assign({}, file)
+
+          let canvas = this.$refs.canvas
+          let context = canvas.getContext('2d')
+
+          var reader = new FileReader()
+          reader.onload = event => {
+            var img = new Image()
+            img.onload = () => {
+              canvas.width = img.width
+              canvas.height = img.height
+              context.drawImage(img,0,0)
+              this.imageCaptured = true
+            }
+            img.src = event.target.result
+          }
+          reader.readAsDataURL(file)
         }
         
     },
