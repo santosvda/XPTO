@@ -150,8 +150,8 @@
               />
             </div>
               <div class="row justify-center q-pd-sm">
-                <q-btn class="col-3" label="Enviar" type="submit" color="green-6"/>
-                <q-btn label="Apagar" type="reset" color="grey-7" class="col-3 q-ml-sm q-mr-sm" />
+                <q-btn icon-right="eva-cloud-upload-outline" class="col-3" label="Enviar" type="submit" color="green-6"/>
+                <q-btn icon-right="eva-backspace-outline" label="Apagar" type="reset" color="grey-7" class="col-3 q-ml-sm q-mr-sm" />
                 <q-btn icon-right="eva-slash" label="Cancelar" color="red-6" class="col-3"  v-close-popup />
               </div>
             </q-form>
