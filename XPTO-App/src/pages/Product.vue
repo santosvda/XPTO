@@ -51,7 +51,7 @@
                 Editar
               </q-item-section>
             </q-item>
-            <q-item clickable v-ripple @click="openModal(props.row)">
+            <q-item clickable v-ripple @click="removeModal(props.row.id)">
               <q-item-section avatar>
                 <q-btn color="red-10" round dense icon="eva-trash-2-outline" />
               </q-item-section>
@@ -79,12 +79,12 @@
       full-height
       full-width
     >
-      <q-card class="column full-height" style="width: 300px">
+      <q-card class="  column full-height" style="width: 300px">
         <q-card-section>
           <div class="text-h6">{{modalTitle}}</div>
         </q-card-section>
 
-        <q-card-section class="col q-pt-none">
+        <q-card-section class="col q-mb-sm q-pt-none">
            <q-form
               @submit="onSubmit"
               @reset="onReset"
@@ -127,11 +127,7 @@
                   val => val.length <= 200 || 'Código de barras excedeu o limite de 200 caracteres'
                 ]"
               />
-
-              <div class="text-grey-10">
-                <q-btn label="Enviar" type="submit" color="green-6"/>
-                <q-btn label="Apagar" type="reset" color="grey-7" class="q-ml-sm q-mr-sm" />
-                <q-btn icon-right="eva-slash" label="Cancelar" color="red-6"  v-close-popup />
+              <div class="">
                 <q-file
                   class="q-mt-lg"
                   v-model="imageUpload"
@@ -140,20 +136,23 @@
                   accept="image/*"
                   outlined
                 >
-                <div class="camera-frame q-pa-md">
-                  <canvas
-                  v-show="imageCaptured"
-                  ref="canvas"
-                  class="full-width"
-                  height="240"
-                  id="cvs"
-                />
-              </div>
                   <template v-slot:prepend>
                     <q-icon name="eva-attach-outline" />
                   </template>
                 </q-file>
-                
+              </div>
+            <div class="box row justify-center q-pa-md">
+              <canvas
+                v-show="imageCaptured"
+                ref="canvas"
+                class="q-canvas"
+                height="240"
+              />
+            </div>
+              <div class="row justify-center q-pd-sm">
+                <q-btn class="col-3" label="Enviar" type="submit" color="green-6"/>
+                <q-btn label="Apagar" type="reset" color="grey-7" class="col-3 q-ml-sm q-mr-sm" />
+                <q-btn icon-right="eva-slash" label="Cancelar" color="red-6" class="col-3"  v-close-popup />
               </div>
             </q-form>
         </q-card-section>
@@ -298,6 +297,51 @@ export default {
 
             this.card = false;
         },
+        removeModal(id){
+          console.log(id)
+          this.$q.dialog({
+          title: 'Confirmar',
+          message: `Tem certeza que deseja remover esse produto?`,
+          color: 'negative',
+          ok: `Sim, tenho certeza`,
+          cancel: true,
+          default: 'Cancelar'   // <<<<
+        }).onOk(() => this.removeObject(id) )
+           
+        },
+        removeObject(id){
+            this.$q.loading.show()
+
+            this.$axios.delete(`http://localhost:5000/api/Product/${id}`).then(response => {
+              console.log('response: ', response)
+              this.$q.notify({
+                color: 'red',
+                textColor: 'white',
+                icon: 'eva-cloud-upload',
+                message: 'Produto Removido!',
+                actions: [
+                  { label: 'Fechar', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+              this.getAllProducts()
+            }).catch(err => {
+              console.log('err: ', err)
+              this.$q.notify({
+                color: 'red-7',
+                textColor: 'white',
+                icon: 'eva-cloud-upload',
+                message: 'Ops! Algo deu errado!',
+                message: 'Erro!',
+                actions: [
+                  { label: 'Fechar', color: 'white' }
+                ]
+              })
+              this.$q.loading.hide()
+            })
+
+            this.card = false;
+        },
         onSubmit () {
           console.log(this.product)
           if(this.create){
@@ -305,17 +349,14 @@ export default {
           }else{
             this.updateProduct()
           }
-          this.imageUpload = []
+          this.clean()
         },
         onReset () {
           this.product = {title: '', price: 0.00, barCode: '', image64: ''}
-          this.imageUpload = []
-          let canvas = this.$refs.canvas
-          let context = canvas.getContext('2d')
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          this.imageCaptured = false
+          this.clean()
         },
         captureImage(file) {
+          this.clean()
           let canvas = this.$refs.canvas
           let context = canvas.getContext('2d')
 
@@ -323,9 +364,9 @@ export default {
           reader.onload = event => {
             var img = new Image()
             img.onload = () => {
-              canvas.width = img.width
               canvas.height = img.height
-              context.drawImage(img,0,0)
+              canvas.width = img.width
+              context.drawImage(img,0,0,canvas.width,canvas.height)
               this.imageCaptured = true
             }
             img.src = event.target.result
@@ -363,6 +404,13 @@ export default {
             this.product.image64 = event.target.result
           }
           reader.readAsDataURL(this.dataURLtoFile('data:image/png;base64,'+this.product.image64,'img.png'))
+      },
+      clean(){
+          this.imageUpload = []
+          let canvas = this.$refs.canvas
+          let context = canvas.getContext('2d')
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          this.imageCaptured = false
       }
         
     },
@@ -374,6 +422,12 @@ export default {
 
 <style lang="sass">
 .camera-frame
-    border: 2px solid $grey-10
-    border-radius: 10px
+  margim-top: -5px
+  border: 2px solid $grey-10
+  border-radius: 5px
+.q-canvas
+  max-width: 40%
+  max-height: 300px
+#box
+    overflow: auto
 </style>
