@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using XPTO.API.Dtos;
 using XPTO.Domain;
-using XPTO.Repository;
+using XPTO.Domain.FakeStore;
+using XPTO.Repository.FakeStore;
 using XPTO.Repository.Interfaces;
 
 namespace XPTO.API.Controllers
@@ -105,6 +106,14 @@ namespace XPTO.API.Controllers
 
                 product.DateInsert = DateTime.Now;
                 _productRepository.Add(product);
+
+                FakeStoreProduct fakeProduct = new FakeStoreProduct(product);
+
+                bool fakeSent = FakeStoreRepository.PostProduct(fakeProduct);
+
+                if(!fakeSent){
+                    return BadRequest();
+                }
 
                 if (await _productRepository.SaveChangesAsync())
                 {
