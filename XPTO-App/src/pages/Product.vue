@@ -228,7 +228,7 @@ export default {
         createProduct() {
            this.$q.loading.show()
 
-            this.$axios.post('http://localhost:5000/api/Product', this.product).then(response => {
+            this.$axios.post(`${ process.env.API }/product`, this.product).then(response => {
               console.log('response: ', response)
               this.$q.notify({
                 color: 'green-4',
@@ -267,7 +267,7 @@ export default {
         updateProduct(){          
             this.$q.loading.show()
 
-            this.$axios.put(`http://localhost:5000/api/Product/${this.product.id}`, this.product).then(response => {
+            this.$axios.put(`${ process.env.API }/product/${this.product.id}`, this.product).then(response => {
               console.log('response: ', response)
               this.$q.notify({
                 color: 'green-4',
@@ -312,7 +312,7 @@ export default {
         removeObject(id){
             this.$q.loading.show()
 
-            this.$axios.delete(`http://localhost:5000/api/Product/${id}`).then(response => {
+            this.$axios.delete(`${ process.env.API }/product/${id}`).then(response => {
               console.log('response: ', response)
               this.$q.notify({
                 color: 'red',
@@ -412,7 +412,6 @@ export default {
           context.clearRect(0, 0, canvas.width, canvas.height);
           this.imageCaptured = false
       }
-        
     },
     beforeMount() {
       this.getAllProducts()

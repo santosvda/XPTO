@@ -7,6 +7,8 @@ const { Loading } = require("quasar")
 
 // Configuration for your app
 // https://v1.quasar.dev/quasar-cli/quasar-conf-js
+let API_LOCAL = 'http://localhost:5000/api',
+    API_PRODUCTION = '[YOUR LIVE BACKEND URL]'
 
 module.exports = function (/* ctx */) {
   return {
@@ -45,6 +47,9 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: {
+        API: API_LOCAL // API_LOCAL | API_PRODUCTION
+      },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // transpile: false,
