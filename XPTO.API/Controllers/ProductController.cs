@@ -126,6 +126,12 @@ namespace XPTO.API.Controllers
                 var product = await _productRepository.GetProductAsyncById(productId);
                 if (product == null) return NotFound();
 
+                Regex regex=new Regex(@"^[\w/\:.-]+;base64,");
+                string base64Str = regex.Replace(model.Image64,string.Empty);
+                byte[] fileBytes = Convert.FromBase64String(base64Str);
+                
+                model.setImage(fileBytes);
+
                 var productNew = _mapper.Map<Product>(model);
 
                 productNew.Id = productId;
