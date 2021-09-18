@@ -35,13 +35,11 @@ namespace XPTO.API
         {
              var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            //configuração de conexão com o banco
+            //Database connection configuration
             services.AddDbContext<XPTOContext>(options =>
             {
-                //options.UseLazyLoadingProxies().UseMySql(Configuration.GetConnectionString(Configuration["Database:DefaultConnection"]), x =>
                 options.UseSqlServer(Configuration.GetConnectionString(Configuration["Database:DefaultConnection"]), x =>
                 {
-                    //x.ServerVersion(new Version(5, 7, 21), ServerType.MySql);
                     x.MigrationsHistoryTable("EfMigrations");
                     x.MigrationsAssembly(migrationsAssembly);
                     
@@ -50,21 +48,12 @@ namespace XPTO.API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
-            //Informar a aplicação que a mesma trabalha com AutoMapper
-            /*
-                    *Domain*    *API*  
-                Ex: Evento <--> EventoDto
-                DTO = Data transfer object
-            */
             services.AddAutoMapper();
 
-            //sempre que precisar do IProAgilRepository, impletamenta o ProAgilRepository
             services.AddScoped<IProductRepository, ProductRepository>();
 
-            //Configuração de permisão - CORS
             services.AddCors();
 
-            //Adicionando swagger
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {Title = "XPTO", Version = "v1"});
             });
@@ -84,10 +73,7 @@ namespace XPTO.API
             }
 
             InitializeDatabase(app);
-
-            //app.UseAuthentication(); //informa que a api precisa ser autenticada
-
-            //app.UseHttpsRedirection();
+            
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseMvc();
 

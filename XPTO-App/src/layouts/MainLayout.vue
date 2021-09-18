@@ -63,7 +63,7 @@
       </q-drawer>
 
     <q-footer class="bg-purple-1 text-grey-10 text-body1 text-center" bordered>
-      <p>Felipe Dos Santos - 2021 - Github: santosvda</p>
+      <p>Felipe Dos Santos - 2021 - Github: <a href="https://github.com/santosvda">santosvda</a></p>
     </q-footer>
 
     <q-page-container class="bg-grey-2">

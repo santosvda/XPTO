@@ -14,7 +14,6 @@ namespace XPTO.Repository.Repositorys
             _context = context;
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
-        //Gerais
         public void Add<T>(T entity) where T : class
         {
             _context.Add(entity);

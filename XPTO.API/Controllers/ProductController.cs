@@ -14,7 +14,7 @@ namespace XPTO.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase //herda para trabalhar com http e etc
+    public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
