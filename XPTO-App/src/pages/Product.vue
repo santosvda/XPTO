@@ -72,6 +72,10 @@
           </template>
         </q-input>
       </template>
+    <template v-slot:top-right>
+      <q-btn color="blue-6" icon="eva-cloud-download-outline" :disable="loading" label="Atualizar" @click="getAllProducts" />
+    </template>
+
     </q-table>
 
     <div>
