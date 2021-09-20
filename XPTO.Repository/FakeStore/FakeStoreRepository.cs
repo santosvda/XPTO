@@ -13,7 +13,6 @@ namespace XPTO.Repository.FakeStore
     {
         private static string baseURL = "https://fakestoreapi.com/";
         private static HttpClient client = new HttpClient();
-        private static HttpWebRequest webRequest;
 
         public static bool PostProduct(FakeStoreProduct product)
         {

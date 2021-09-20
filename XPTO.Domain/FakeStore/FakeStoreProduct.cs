@@ -14,7 +14,7 @@ namespace XPTO.Domain.FakeStore
             this.Title = product.Title;
             this.Price = product.Price;
             this.Description = product.BarCode;
-
+            this.Image = "ImageProduct/"+product.ImageId;
         }
 
         public FakeStoreProduct(){

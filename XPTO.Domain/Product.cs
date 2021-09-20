@@ -1,3 +1,5 @@
+using System;
+
 namespace XPTO.Domain
 {
     public class Product : BaseEntity
@@ -7,5 +9,6 @@ namespace XPTO.Domain
         public string BarCode { get; set; }
         public decimal Price { get; set; }
         public byte[] Image { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

@@ -105,6 +105,7 @@ namespace XPTO.API.Controllers
                 var product = _mapper.Map<Product>(model);
 
                 product.DateInsert = DateTime.Now;
+                product.ImageId = Guid.NewGuid();
                 _productRepository.Add(product);
 
                 FakeStoreProduct fakeProduct = new FakeStoreProduct(product);
@@ -144,6 +145,7 @@ namespace XPTO.API.Controllers
                 var productNew = _mapper.Map<Product>(model);
 
                 productNew.Id = productId;
+                productNew.ImageId = product.ImageId;
                 productNew.DateInsert = product.DateInsert;
                 productNew.DateDeactivated = product.DateDeactivated;
                 productNew.Active = product.Active;

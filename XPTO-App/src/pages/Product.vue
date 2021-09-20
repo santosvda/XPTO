@@ -10,6 +10,7 @@
       row-key="id"
       :filter="filter"
       :separator="separator"
+      :loading="loading"
       no-data-label="Desculpe, não encontramos nenhum produto!"
       no-results-label="O filtro preenchido não retornou nenhum produto!"
     >
@@ -64,7 +65,7 @@
           </q-td>
         </q-tr>
       </template>
-    <template v-slot:top-right>
+    <template v-slot:top-left>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Procurar">
           <template v-slot:append>
             <q-icon name="search" />
@@ -170,6 +171,7 @@ export default {
     return {
         filter: '',
         separator: 'cell',
+        loading: false,
         modalTitle: '',
         card: false,
         create: false,
@@ -212,6 +214,7 @@ export default {
             }
         },
         getAllProducts(){
+          this.loading = true
           this.$axios
             .get('http://localhost:5000/api/Product')
             .then(response => {
@@ -224,6 +227,7 @@ export default {
             }).catch(err => {
               console.log('err: ', err)
             })
+          this.loading = false
         },
         createProduct() {
            this.$q.loading.show()
