@@ -35,6 +35,10 @@ Em /XPTO.API/ execute:
 dotnet run
 ```
 ## Executando o APP
+Primeiramente:
+```sh
+npm install
+```
 Em /XPTO-APP execute:
 ```sh
 npx quasar dev
