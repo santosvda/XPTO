@@ -45,5 +45,63 @@ namespace XPTO.Repository.FakeStore
                 return false;
             }
         }
+        public static bool UpdateProduct(FakeStoreProduct product, int productId)
+        {
+            try
+            {
+                if (client.BaseAddress == null)
+                {
+                    client.BaseAddress = new Uri(baseURL);
+                }
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var data = JsonConvert.SerializeObject(product);
+
+                var request = new StringContent(JsonConvert.SerializeObject(product), Encoding.UTF8, "application/json");
+
+                string route = "products/"+productId;
+
+                var postResponse = client.PutAsync(route, request).Result;
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static bool DeleteProduct(int productId)
+        {
+            try
+            {
+                if (client.BaseAddress == null)
+                {
+                    client.BaseAddress = new Uri(baseURL);
+                }
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                string route = "products/"+productId;
+
+                var postResponse = client.DeleteAsync(route).Result;
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

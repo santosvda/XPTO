@@ -152,6 +152,14 @@ namespace XPTO.API.Controllers
 
                 _productRepository.Update(productNew);
 
+                FakeStoreProduct fakeProduct = new FakeStoreProduct(product);
+
+                bool fakeSent = FakeStoreRepository.UpdateProduct(fakeProduct,productId);
+
+                if(!fakeSent){
+                    return BadRequest();
+                }
+
                 if (await _productRepository.SaveChangesAsync())
                 {
                     return Created($"/api/Product/{model.Id}", model);
@@ -177,6 +185,14 @@ namespace XPTO.API.Controllers
                 product.DateDeactivated = DateTime.Now;
 
                 _productRepository.Update(product);
+
+                FakeStoreProduct fakeProduct = new FakeStoreProduct(product);
+
+                bool fakeSent = FakeStoreRepository.DeleteProduct(productId);
+
+                if(!fakeSent){
+                    return BadRequest();
+                }
 
                 if (await _productRepository.SaveChangesAsync())
                 {
