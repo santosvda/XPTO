@@ -7,7 +7,7 @@
     <q-table
       :data="data"
       :columns="columns"
-      row-key="id"
+      row-key="price"
       :filter="filter"
       :separator="separator"
       :loading="loading"
@@ -195,7 +195,10 @@ export default {
         style: 'max-width: 100px',
         headerClasses: 'bg-primary text-white'
         },
-        { name: 'price', align: 'left', label: 'Preço (R$)', field: 'price', sortable: true},
+        { 
+          name: 'price', type: 'number', align: 'left', label: 'Preço (R$)', field: 'price', sortable: true, sort (a, b) {
+          return (a - b);}
+        },
         { name: 'barcode', align: 'left', label: 'Código de Barras', field: 'barCode', sortable: true },
         ],
         data: [
